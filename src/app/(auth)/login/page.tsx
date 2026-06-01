@@ -1,6 +1,13 @@
 import { login } from './actions'
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams;
+  const errorMsg = params.error as string | undefined;
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <div className="w-full max-w-md bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20 dark:border-gray-700/50">
@@ -8,6 +15,12 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">NexusPOS AI</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Sign in to your account</p>
         </div>
+
+        {errorMsg && (
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg border border-red-200 dark:border-red-800">
+            {errorMsg}
+          </div>
+        )}
         
         <form className="space-y-6">
           <div>

@@ -6,7 +6,7 @@ import { usePermission } from '@/hooks/usePermission'
 import { 
   LayoutDashboard, ShoppingCart, Package, Users, 
   UserCheck, Box, Calculator, BarChart3, 
-  Bell, Plug, Settings 
+  Bell, Plug, Settings, MonitorSmartphone, Receipt, Activity
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -15,8 +15,10 @@ const NAVIGATION_GROUPS = [
     group: 'Operations',
     items: [
       { name: 'Overview', href: '/dashboard/overview', icon: LayoutDashboard, module: 'pos' },
-      { name: 'POS', href: '/dashboard/pos', icon: ShoppingCart, module: 'pos' },
+      { name: 'POS', href: '/dashboard/pos', icon: MonitorSmartphone, module: 'pos' },
+      { name: 'KDS', href: '/dashboard/kds', icon: Activity, module: 'pos' },
       { name: 'Inventory', href: '/dashboard/inventory', icon: Package, module: 'inventory' },
+      { name: 'Orders', href: '/dashboard/orders', icon: Receipt, module: 'pos' },
     ]
   },
   {

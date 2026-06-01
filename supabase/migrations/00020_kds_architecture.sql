@@ -20,7 +20,7 @@ CREATE TABLE public.kitchen_stations (
 
 -- 2. LINK PRODUCTS TO STATIONS
 -- ------------------------------------------------------------------------------
-ALTER TABLE public.products ADD COLUMN kitchen_station_id UUID REFERENCES public.kitchen_stations(id) ON DELETE SET NULL;
+ALTER TABLE public.menu_items ADD COLUMN kitchen_station_id UUID REFERENCES public.kitchen_stations(id) ON DELETE SET NULL;
 
 -- 3. KITCHEN TICKETS
 -- ------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ CREATE TABLE public.kitchen_ticket_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     ticket_id UUID NOT NULL REFERENCES public.kitchen_tickets(id) ON DELETE CASCADE,
-    product_id UUID NOT NULL REFERENCES public.products(id),
+    menu_item_id UUID NOT NULL REFERENCES public.menu_items(id),
     product_name VARCHAR(255) NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     modifiers JSONB,
@@ -67,7 +67,7 @@ CREATE OR REPLACE FUNCTION route_order_to_kds()
 RETURNS TRIGGER AS $$
 DECLARE
     v_item JSONB;
-    v_product_id UUID;
+    v_menu_item_id UUID;
     v_station_id UUID;
     v_ticket_id UUID;
     v_order_type VARCHAR;
@@ -82,11 +82,11 @@ BEGIN
         -- Loop through the payload items
         FOR v_item IN SELECT * FROM jsonb_array_elements(NEW.payload->'items')
         LOOP
-            v_product_id := (v_item->>'id')::UUID;
+            v_menu_item_id := (v_item->>'id')::UUID;
             
             -- Determine the station for this product
             SELECT kitchen_station_id INTO v_station_id
-            FROM public.products WHERE id = v_product_id;
+            FROM public.menu_items WHERE id = v_menu_item_id;
             
             -- Fallback to a default 'GENERAL' station if mapping is missing
             IF v_station_id IS NULL THEN
@@ -112,9 +112,9 @@ BEGIN
                 
                 -- Add item to ticket
                 INSERT INTO public.kitchen_ticket_items (
-                    tenant_id, ticket_id, product_id, product_name, quantity, modifiers, notes
+                    tenant_id, ticket_id, menu_item_id, product_name, quantity, modifiers, notes
                 ) VALUES (
-                    NEW.tenant_id, v_ticket_id, v_product_id, v_item->>'name', (v_item->>'quantity')::INT, v_item->'modifiers', v_item->>'notes'
+                    NEW.tenant_id, v_ticket_id, v_menu_item_id, v_item->>'name', (v_item->>'quantity')::INT, v_item->'modifiers', v_item->>'notes'
                 );
             END IF;
         END LOOP;

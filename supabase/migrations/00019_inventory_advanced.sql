@@ -21,14 +21,14 @@ CREATE TABLE public.recipe_versions (
     UNIQUE (tenant_id, recipe_id, version_number)
 );
 
--- Repoint recipe_ingredients to recipe_version_id
-ALTER TABLE public.recipe_ingredients ADD COLUMN recipe_version_id UUID;
-ALTER TABLE public.recipe_ingredients 
+-- Repoint recipe_items to recipe_version_id
+ALTER TABLE public.recipe_items ADD COLUMN recipe_version_id UUID;
+ALTER TABLE public.recipe_items 
     ADD CONSTRAINT fk_ri_version FOREIGN KEY (recipe_version_id) REFERENCES public.recipe_versions(id) ON DELETE CASCADE;
 
 -- Drop old linkage to parent recipe
-ALTER TABLE public.recipe_ingredients DROP COLUMN recipe_id CASCADE;
-ALTER TABLE public.recipe_ingredients ALTER COLUMN recipe_version_id SET NOT NULL;
+ALTER TABLE public.recipe_items DROP COLUMN recipe_id CASCADE;
+ALTER TABLE public.recipe_items ALTER COLUMN recipe_version_id SET NOT NULL;
 
 -- 2. REORDER INTELLIGENCE (Upgrading inventory_items)
 -- ---------------------------------------------------------
@@ -125,7 +125,7 @@ BEGIN
                 SELECT ri.inventory_item_id, ri.quantity
                 FROM public.recipes r
                 JOIN public.recipe_versions rv ON r.id = rv.recipe_id
-                JOIN public.recipe_ingredients ri ON rv.id = ri.recipe_version_id
+                JOIN public.recipe_items ri ON rv.id = ri.recipe_version_id
                 WHERE r.product_id = v_product_id 
                   AND rv.effective_from <= v_order_time 
                   AND (rv.effective_to IS NULL OR rv.effective_to > v_order_time)

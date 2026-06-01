@@ -129,7 +129,7 @@ CREATE INDEX IF NOT EXISTS idx_po_items_active ON public.po_items(tenant_id) WHE
 
 CREATE TRIGGER set_po_items_updated_at
 BEFORE UPDATE ON public.po_items
-FOR EACH ROW EXECUTE FUNCTION public.set_po_items_updated_at();
+FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 CREATE TRIGGER audit_po_items
 AFTER INSERT OR UPDATE OR DELETE ON public.po_items

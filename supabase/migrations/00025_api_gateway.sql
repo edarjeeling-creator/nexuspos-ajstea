@@ -22,7 +22,7 @@ CREATE TABLE public.api_keys (
 
 -- 2. INTEGRATION LOGS (Enterprise Monitoring)
 -- ------------------------------------------------------------------------------
-CREATE TABLE public.integration_logs (
+CREATE TABLE public.api_gateway_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     api_key_id UUID REFERENCES public.api_keys(id), -- Null if failed auth
@@ -37,12 +37,12 @@ CREATE TABLE public.integration_logs (
 );
 
 -- Index for fast monitoring dashboard queries
-CREATE INDEX idx_integration_logs_tenant_created ON public.integration_logs(tenant_id, created_at DESC);
-CREATE INDEX idx_integration_logs_errors ON public.integration_logs(tenant_id, status_code) WHERE status_code >= 400;
+CREATE INDEX idx_api_gateway_logs_tenant_created ON public.api_gateway_logs(tenant_id, created_at DESC);
+CREATE INDEX idx_api_gateway_logs_errors ON public.api_gateway_logs(tenant_id, status_code) WHERE status_code >= 400;
 
 -- RLS
 ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.integration_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.api_gateway_logs ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY ak_isolation ON public.api_keys FOR ALL USING (tenant_id = public.get_current_tenant_id());
-CREATE POLICY il_isolation ON public.integration_logs FOR ALL USING (tenant_id = public.get_current_tenant_id());
+CREATE POLICY il_isolation ON public.api_gateway_logs FOR ALL USING (tenant_id = public.get_current_tenant_id());

@@ -7,9 +7,9 @@ import { Flame, Droplet, Martini, CakeSlice, CheckSquare, ArrowRight } from 'luc
 import Link from 'next/link'
 
 const STATIONS = [
-  { id: '1', name: 'Hot Grill', type: 'GRILL', icon: Flame, color: 'text-orange-500', border: 'border-orange-500/50', hover: 'hover:border-orange-500' },
-  { id: '2', name: 'Fryer Station', type: 'FRYER', icon: Droplet, color: 'text-amber-500', border: 'border-amber-500/50', hover: 'hover:border-amber-500' },
-  { id: '3', name: 'Main Bar', type: 'BAR', icon: Martini, color: 'text-blue-500', border: 'border-blue-500/50', hover: 'hover:border-blue-500' },
+  { id: '1', name: 'Hot Kitchen', type: 'KITCHEN', icon: Flame, color: 'text-orange-500', border: 'border-orange-500/50', hover: 'hover:border-orange-500' },
+  { id: '2', name: 'Main Bar', type: 'BAR', icon: Martini, color: 'text-blue-500', border: 'border-blue-500/50', hover: 'hover:border-blue-500' },
+  { id: '3', name: 'Bakery', type: 'BAKERY', icon: Droplet, color: 'text-amber-500', border: 'border-amber-500/50', hover: 'hover:border-amber-500' },
   { id: '4', name: 'Desserts', type: 'DESSERT', icon: CakeSlice, color: 'text-pink-500', border: 'border-pink-500/50', hover: 'hover:border-pink-500' },
   { id: '5', name: 'Expo Line', type: 'EXPO', icon: CheckSquare, color: 'text-indigo-500', border: 'border-indigo-500/50', hover: 'hover:border-indigo-500' },
 ]

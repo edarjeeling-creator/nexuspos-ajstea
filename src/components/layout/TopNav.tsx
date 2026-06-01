@@ -48,7 +48,7 @@ export function TopNav() {
         </SheetContent>
       </Sheet>
 
-      <div className="w-full flex-1">
+      <div className="w-full flex-1" suppressHydrationWarning>
         {/* Breadcrumbs could go here */}
       </div>
 

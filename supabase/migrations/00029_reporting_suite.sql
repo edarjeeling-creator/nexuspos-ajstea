@@ -33,7 +33,7 @@ SELECT
     SUM(jl.credit) - SUM(jl.debit) AS net_balance -- Standard accounting rollup logic
 FROM public.journal_lines jl
 JOIN public.journal_entries je ON jl.journal_entry_id = je.id
-JOIN public.chart_of_accounts coa ON jl.account_id = coa.id
+JOIN public.accounts coa ON jl.account_id = coa.id
 WHERE je.status = 'POSTED'
 GROUP BY jl.tenant_id, DATE(je.entry_date), coa.account_type;
 
@@ -43,13 +43,13 @@ SELECT
     kt.tenant_id,
     kt.outlet_id,
     DATE(kt.created_at) AS kds_date,
-    kt.kitchen_station_id,
+    kt.station_id,
     COUNT(kt.id) AS tickets_processed,
     AVG(EXTRACT(EPOCH FROM (kt.ready_at - kt.prep_started_at))/60) AS avg_prep_time_minutes,
     COUNT(CASE WHEN EXTRACT(EPOCH FROM (kt.ready_at - kt.prep_started_at))/60 > 15 THEN 1 END) AS sla_breaches
 FROM public.kitchen_tickets kt
 WHERE kt.status IN ('READY', 'SERVED')
-GROUP BY kt.tenant_id, kt.outlet_id, DATE(kt.created_at), kt.kitchen_station_id;
+GROUP BY kt.tenant_id, kt.outlet_id, DATE(kt.created_at), kt.station_id;
 
 -- 2D. Inventory Actual vs Theoretical & Waste
 CREATE MATERIALIZED VIEW reporting.mv_inventory AS
@@ -57,16 +57,16 @@ SELECT
     it.tenant_id,
     it.outlet_id,
     DATE(it.created_at) AS inventory_date,
-    SUM(CASE WHEN it.transaction_type = 'WASTE_RECORDED' THEN ABS(it.quantity) ELSE 0 END) AS total_waste_qty,
-    SUM(CASE WHEN it.transaction_type = 'SHRINKAGE' THEN ABS(it.quantity) ELSE 0 END) AS total_shrinkage_qty,
-    SUM(CASE WHEN it.transaction_type = 'OVERPORTIONING' THEN ABS(it.quantity) ELSE 0 END) AS total_overportioning_qty
+    SUM(CASE WHEN it.transaction_type = 'WASTE_RECORDED' THEN ABS(it.quantity_change) ELSE 0 END) AS total_waste_qty,
+    SUM(CASE WHEN it.transaction_type = 'SHRINKAGE' THEN ABS(it.quantity_change) ELSE 0 END) AS total_shrinkage_qty,
+    SUM(CASE WHEN it.transaction_type = 'OVERPORTIONING' THEN ABS(it.quantity_change) ELSE 0 END) AS total_overportioning_qty
 FROM public.inventory_transactions it
 GROUP BY it.tenant_id, it.outlet_id, DATE(it.created_at);
 
 -- Indexes to speed up MV queries
 CREATE UNIQUE INDEX idx_mv_sales ON reporting.mv_daily_sales (tenant_id, outlet_id, sales_date);
 CREATE UNIQUE INDEX idx_mv_fin ON reporting.mv_financials (tenant_id, entry_date, account_type);
-CREATE UNIQUE INDEX idx_mv_kds ON reporting.mv_kds (tenant_id, outlet_id, kds_date, kitchen_station_id);
+CREATE UNIQUE INDEX idx_mv_kds ON reporting.mv_kds (tenant_id, outlet_id, kds_date, station_id);
 CREATE UNIQUE INDEX idx_mv_inv ON reporting.mv_inventory (tenant_id, outlet_id, inventory_date);
 
 

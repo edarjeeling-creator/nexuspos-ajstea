@@ -3,7 +3,33 @@
 -- Description: Inventory management with ledger-based transactions.
 -- ==============================================================================
 
--- 1. INVENTORY CATEGORIES
+-- 1. WAREHOUSES
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.warehouses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    outlet_id UUID REFERENCES public.outlets(id) ON DELETE SET NULL,
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER set_warehouses_updated_at
+BEFORE UPDATE ON public.warehouses
+FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+CREATE TRIGGER audit_warehouses
+AFTER INSERT OR UPDATE OR DELETE ON public.warehouses
+FOR EACH ROW EXECUTE FUNCTION public.process_audit_log();
+
+ALTER TABLE public.warehouses ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY warehouses_isolation_policy ON public.warehouses
+    FOR ALL USING (tenant_id = public.get_current_tenant_id());
+
+-- 2. INVENTORY CATEGORIES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -218,3 +244,6 @@ DROP TABLE IF EXISTS public.inventory_transactions CASCADE;
 DROP TABLE IF EXISTS public.inventory_items CASCADE;
 DROP TABLE IF EXISTS public.categories CASCADE;
 */
+
+
+

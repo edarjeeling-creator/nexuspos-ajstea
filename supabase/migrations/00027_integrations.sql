@@ -56,7 +56,7 @@ CREATE TABLE public.marketplace_mappings (
     tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     marketplace VARCHAR(50) NOT NULL CHECK (marketplace IN ('ZOMATO', 'SWIGGY', 'ONDC', 'UBER_EATS')),
     marketplace_item_id VARCHAR(255) NOT NULL,
-    local_product_id UUID NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+    local_menu_item_id UUID NOT NULL REFERENCES public.menu_items(id) ON DELETE CASCADE,
     price_override DECIMAL(15,2), -- Marketplaces often have higher prices
     is_active BOOLEAN DEFAULT true,
     UNIQUE(tenant_id, marketplace, marketplace_item_id)

@@ -41,27 +41,35 @@ CREATE POLICY profiles_isolation_policy ON public.profiles
 -- Overwrite the stub from 00001 with secure implementation.
 CREATE OR REPLACE FUNCTION public.get_current_tenant_id()
 RETURNS UUID
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $$
-    SELECT public.profiles.tenant_id 
-    FROM public.profiles 
-    WHERE public.profiles.id = auth.uid();
+BEGIN
+    RETURN (
+        SELECT public.profiles.tenant_id 
+        FROM public.profiles 
+        WHERE public.profiles.id = auth.uid()
+    );
+END;
 $$;
 
 -- Add outlet lookup for finer granularity.
 CREATE OR REPLACE FUNCTION public.get_current_outlet_id()
 RETURNS UUID
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $$
-    SELECT public.profiles.outlet_id 
-    FROM public.profiles 
-    WHERE public.profiles.id = auth.uid();
+BEGIN
+    RETURN (
+        SELECT public.profiles.outlet_id 
+        FROM public.profiles 
+        WHERE public.profiles.id = auth.uid()
+    );
+END;
 $$;
 
 
