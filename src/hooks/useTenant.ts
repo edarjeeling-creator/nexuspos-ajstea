@@ -13,17 +13,15 @@ export function useTenant() {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
 
-        const { data: outletUser } = await supabase
-          .from('outlet_users')
-          .select('outlet_id, outlets(tenant_id)')
-          .eq('user_id', user.id)
-          .limit(1)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('outlet_id, tenant_id')
+          .eq('id', user.id)
           .single()
 
-        if (outletUser) {
-          setOutletId(outletUser.outlet_id)
-          // @ts-ignore
-          setTenantId(outletUser.outlets?.tenant_id)
+        if (profile) {
+          setOutletId(profile.outlet_id)
+          setTenantId(profile.tenant_id)
         }
       } catch (err) {
         console.error('Failed to load tenant details', err)
