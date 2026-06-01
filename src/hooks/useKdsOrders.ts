@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/client'
 import { useAuth } from '@/providers/AuthProvider'
 import { useTenant } from '@/providers/TenantProvider'
 
@@ -29,6 +29,7 @@ export function useKdsOrders(stationType: string) {
   const [orders, setOrders] = useState<KdsOrder[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     if (!currentTenant || !currentOutlet) return

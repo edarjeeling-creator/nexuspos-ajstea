@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import html2pdf from 'html2pdf.js';
 
 export default function ShipmentsPage() {
+  const supabase = createClient();
   const [shipments, setShipments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
