@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/utils/supabase/client'
 
 export function useTenant() {
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [outletId, setOutletId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     async function loadTenant() {

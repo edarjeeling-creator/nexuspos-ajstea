@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/utils/supabase/client'
 import { useTenant } from '@/hooks/useTenant'
 import { Button } from '@/components/ui/button'
 
 export default function ReceiptSettingsPage() {
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const { outletId, isLoading: tenantLoading } = useTenant()
   const [isLoading, setIsLoading] = useState(false)
 

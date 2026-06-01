@@ -7,13 +7,13 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   LineChart, Line, PieChart as RePieChart, Pie, Cell, Legend
 } from 'recharts'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/utils/supabase/client'
 import { useTenant } from '@/hooks/useTenant'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function AnalyticsPage() {
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const { outletId, isLoading: tenantLoading } = useTenant()
 
   const [isLoading, setIsLoading] = useState(true)
