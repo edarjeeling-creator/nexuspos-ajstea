@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useAuth } from '@/providers/AuthProvider'
+
 import { useTenant } from '@/providers/TenantProvider'
 
 export type KdsItem = {
@@ -24,7 +24,6 @@ export type KdsOrder = {
 }
 
 export function useKdsOrders(stationType: string) {
-  const { user } = useAuth()
   const { currentTenant, currentOutlet } = useTenant()
   const [orders, setOrders] = useState<KdsOrder[]>([])
   const [loading, setLoading] = useState(true)
